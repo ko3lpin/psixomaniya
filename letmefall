@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#05030a',
+                        darkCard: '#0c081a',
+                        neonPurple: '#9d4edd',
+                        neonViolet: '#7b2cbf',
+                        neonPink: '#ff007f',
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        syne: ['Syne', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Плавное появление всего сайта */
+        body { 
+            background-color: #05030a; 
+            color: #f3f4f6; 
+            overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+        body.loaded { opacity: 1; }
+
+        /* Эффект шума/зернистости (Film Grain) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .glow-sphere { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; z-index: 0; pointer-events: none; }
+        
+        /* Glassmorphism для карточек платформ */
+        .platform-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(157, 78, 221, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .platform-card:hover {
+            background: rgba(157, 78, 221, 0.1);
+            border-color: rgba(157, 78, 221, 0.5);
+            transform: translateX(8px);
+        }
+
+        .yandex-svg { width: 24px; height: 24px; fill: currentColor; }
+        
+        /* Анимация обложки */
+        .cover-art {
+            box-shadow: 0 0 40px rgba(157, 78, 221, 0.2);
+            transition: transform 0.5s ease;
+        }
+        .cover-art:hover { transform: scale(1.02); }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-neonPurple">
+
+    <!-- Background Decoration -->
+    <div class="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] glow-sphere bg-neonPurple"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] glow-sphere bg-neonViolet"></div>
+
+    <div class="relative z-10 min-h-screen flex flex-col items-center py-12 px-6">
+        
+        <!-- Header / Logo -->
+        <header class="mb-12 reveal">
+            <a href="/" class="font-syne text-2xl font-extrabold tracking-[0.3em] text-neonPurple uppercase">
+                PSIXOmaniya
+            </a>
+        </header>
+
+        <!-- Main Release Content -->
+        <main class="w-full max-w-md">
+            
+            <!-- Cover Art Section -->
+            <div class="mb-8 reveal" style="transition-delay: 0.1s;">
+                <div class="aspect-square w-full relative group">
+                    <div class="absolute -inset-2 bg-neonPurple/20 blur-xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                    <img 
+                        src="LETMEFALL.jpg" 
+                        alt="LETMEFALL" 
+                        class="cover-art relative rounded-lg w-full h-full object-cover border border-white/10"
+                    >
+                </div>
+            </div>
+
+            <!-- Title & Artist -->
+            <div class="text-center mb-10 reveal" style="transition-delay: 0.2s;">
+                <h1 class="font-syne text-4xl font-black tracking-tighter text-white mb-2 uppercase">LETMEFALL</h1>
+                <p class="text-neonPurple font-bold tracking-widest text-sm uppercase">PSIXOmaniya</p>
+            </div>
+
+            <!-- Platform Links (The "Bandlink" Core) -->
+            <div class="space-y-3 mb-16 reveal" style="transition-delay: 0.3s;">
+                
+                <!-- Spotify -->
+                <a href="https://open.spotify.com/album/5WOwYTkODEZp3tNT1kMfaB?si=Ks5vW6QiQ7CHWWxbAcKM4g" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                    <div class="flex items-center space-x-4">
+                        <i class="fa-brands fa-spotify text-2xl text-[#1DB954]"></i>
+                        <span class="text-sm font-bold tracking-wide uppercase">Spotify</span>
+                    </div>
+                    <div class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full group-hover:bg-neonPurple group-hover:text-white transition-colors uppercase">Listen</div>
+                </a>
+
+                <!-- Yandex Music -->
+                <a href="https://music.yandex.ru/album/41586953" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                    <div class="flex items-center space-x-4">
+                        <svg class="yandex-svg text-white" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M345.1 379.8L257.7 576L194 576L290 366.2C244.9 343.3 214.8 301.8 214.8 225.1C214.7 117.7 282.8 64 363.7 64L446 64L446 576L390.9 576L390.9 379.8L345.1 379.8zM390.9 110.5L361.5 110.5C317.1 110.5 274.1 139.9 274.1 225.1C274.1 307.4 313.5 333.9 361.5 333.9L390.9 333.9L390.9 110.5z"/>
+                        </svg>
+                        <span class="text-sm font-bold tracking-wide uppercase">Yandex Music</span>
+                    </div>
+                    <div class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full group-hover:bg-neonPurple group-hover:text-white transition-colors uppercase">Listen</div>
+                </a>
+
+                <!-- VK Music -->
+                <a href="https://vk.ru/music/album/-2000377746_27377746" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                    <div class="flex items-center space-x-4">
+                        <i class="fa-brands fa-vk text-2xl text-[#0077FF]"></i>
+                        <span class="text-sm font-bold tracking-wide uppercase">VK Music</span>
+                    </div>
+                    <div class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full group-hover:bg-neonPurple group-hover:text-white transition-colors uppercase">Listen</div>
+                </a>
+
+                <!-- Apple Music -->
+                <a href="https://music.apple.com/ru/album/letmefall-single/1893092359" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                    <div class="flex items-center space-x-4">
+                        <i class="fa-brands fa-apple text-2xl text-white"></i>
+                        <span class="text-sm font-bold tracking-wide uppercase">Apple Music</span>
+                    </div>
+                    <div class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full group-hover:bg-neonPurple group-hover:text-white transition-colors uppercase">Listen</div>
+                </a>
+
+                <!-- YouTube Music -->
+                <a href="https://music.youtube.com/playlist?list=OLAK5uy_nQOUK3NzMr16X4lfnDvPftvugWQK10Zh8" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                    <div class="flex items-center space-x-4">
+                        <i class="fa-brands fa-youtube text-2xl text-[#FF0000]"></i>
+                        <span class="text-sm font-bold tracking-wide uppercase">YouTube</span>
+                    </div>
+                    <div class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full group-hover:bg-neonPurple group-hover:text-white transition-colors uppercase">Play</div>
+                </a>
+
+            </div>
+        </main>
+
+        <!-- Social Icons Footer -->
+        <footer class="mt-auto pt-8 flex flex-col items-center space-y-6 reveal" style="transition-delay: 0.4s;">
+            <div class="flex space-x-8 text-xl text-gray-500">
+                <a href="https://t.me/PSIXOmaniya_music" target="_blank" class="hover:text-neonPurple transition-colors"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://vk.ru/psixomaniya" target="_blank" class="hover:text-neonPurple transition-colors"><i class="fa-brands fa-vk"></i></a>
+                <a href="https://youtube.com/@PSIXOmaniya" target="_blank" class="hover:text-neonPurple transition-colors"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <p class="text-[10px] text-gray-700 font-bold tracking-widest uppercase">© 2026 PSIXOmaniya</p>
+        </footer>
+    </div>
+
+    <script>
+        // Появление сайта при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+            
+            // Запуск анимации элементов
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => {
+                    el.classList.add('active');
+                });
+            }, 300);
+        });
+
+        // Анимация названия вкладки (Typewriter)
+        const titleText = "PSIXOmaniya";
+        let currentIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 200;
+
+        function animateTitle() {
+            if (!isDeleting) {
+                document.title = titleText.substring(0, currentIndex + 1);
+                currentIndex++;
+                typingSpeed = 200;
+                if (currentIndex === titleText.length) {
+                    isDeleting = true;
+                    typingSpeed = 2000;
+                }
+            } else {
+                document.title = titleText.substring(0, currentIndex - 1) || "P";
+                currentIndex--;
+                typingSpeed = 60;
+                if (currentIndex <= 1) {
+                    isDeleting = false;
+                    typingSpeed = 500;
+                }
+            }
+            setTimeout(animateTitle, typingSpeed);
+        }
+        animateTitle();
+    </script>
+</body>
+</html>
