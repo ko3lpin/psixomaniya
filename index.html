@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#090514',
+                        neonPurple: '#9d4edd',
+                        neonViolet: '#7b2cbf',
+                        neonPink: '#ff007f',
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        syne: ['Syne', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-glow': '0 0 15px rgba(157, 78, 221, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Плавное появление всего тела сайта */
+        body { 
+            background-color: #090514; 
+            color: #f3f4f6; 
+            overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+
+        .glow-sphere { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.3; z-index: 0; pointer-events: none; }
+        
+        /* Улучшенный Scroll Reveal */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); 
+            will-change: transform, opacity;
+        }
+        .reveal.active { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+
+        .glass-card { background: rgba(18, 12, 36, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(157, 78, 221, 0.1); }
+        .yandex-svg { width: 40px; height: 40px; fill: currentColor; }
+
+        /* Задержки для элементов в Hero секции для эффекта очереди */
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-neonPurple">
+
+    <!-- Background Elements -->
+    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] glow-sphere bg-neonPurple"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] glow-sphere bg-neonViolet"></div>
+
+    <header class="fixed top-0 left-0 w-full z-50 glass-card border-b border-white/5 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="font-syne text-xl md:text-2xl font-extrabold tracking-widest text-neonPurple hover:brightness-125 transition-all">
+                PSIXOmaniya
+            </a>
+            
+            <nav class="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#music" class="hover:text-neonPurple transition-colors">Music</a>
+                <a href="#socials" class="hover:text-neonPurple transition-colors">Social</a>
+                <a href="#contact" class="hover:text-neonPurple transition-colors">Contact</a>
+            </nav>
+
+            <button id="mobile-menu-btn" class="md:hidden text-white"><i class="fa-solid fa-bars text-xl"></i></button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-6">
+            
+            <div class="text-center lg:text-left order-2 lg:order-1 reveal delay-1">
+                <h1 class="font-syne text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-6">
+                    PSIXO<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neonPurple to-neonPink">MANIYA</span>
+                </h1>
+                <div class="flex flex-wrap gap-4 justify-center lg:justify-start reveal delay-2">
+                    <a href="#music" class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-neonPurple hover:text-white transition-all duration-300 uppercase text-sm tracking-widest">
+                        Listen to releases
+                    </a>
+                    <a href="#contact" class="px-8 py-4 border border-white/20 rounded-full hover:border-neonPurple transition-all duration-300 uppercase text-sm tracking-widest">
+                        Contact
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex justify-center order-1 lg:order-2 reveal delay-3">
+                <div class="relative w-full max-w-[350px] aspect-[4/5] group">
+                    <div class="absolute -inset-1 bg-neonPurple rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <img 
+                        src="RoeMHZYAS3v3hKSSC2ZPpL5zzQ4_cUW6cO3BsfjyF_6mTJC_sJCMSsGXvgaZWVJo03EO-w0htNrWceg3Aebs0tW9.jpg" 
+                        alt="PSIXOmaniya" 
+                        class="relative rounded-2xl w-full h-full object-cover border border-white/10"
+                        onerror="this.src='https://placehold.co/600x800/120c24/9d4edd?text=PSIXOmaniya'"
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Platforms -->
+    <section id="music" class="py-24 px-6 relative z-10 reveal">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="font-syne text-3xl md:text-5xl font-bold text-center mb-16 uppercase tracking-tighter">Music platforms</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                <a href="https://open.spotify.com/artist/6aKyhyRO1WQ9zYL8P8fQby" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
+                    <i class="fa-brands fa-spotify text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Spotify</span>
+                </a>
+
+                <a href="https://music.yandex.ru/artist/21793367" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
+                    <svg class="yandex-svg mb-4 group-hover:scale-110 transition-transform" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M345.1 379.8L257.7 576L194 576L290 366.2C244.9 343.3 214.8 301.8 214.8 225.1C214.7 117.7 282.8 64 363.7 64L446 64L446 576L390.9 576L390.9 379.8L345.1 379.8zM390.9 110.5L361.5 110.5C317.1 110.5 274.1 139.9 274.1 225.1C274.1 307.4 313.5 333.9 361.5 333.9L390.9 333.9L390.9 110.5z"/>
+                    </svg>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Yandex Music</span>
+                </a>
+
+                <a href="https://vk.ru/artist/psixomaniya" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
+                    <i class="fa-brands fa-vk text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">VK Music</span>
+                </a>
+                <a href="https://music.apple.com/ru/artist/psixomaniya/1734721240" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
+                    <i class="fa-brands fa-apple text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Apple Music</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media -->
+    <section id="socials" class="py-24 px-6 bg-white/5 reveal">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="font-syne text-3xl md:text-5xl font-bold mb-16 uppercase tracking-tighter">Social media</h2>
+            <div class="flex flex-wrap justify-center gap-12">
+                <a href="https://t.me/PSIXOmaniya_music" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+                    <i class="fa-brands fa-telegram"></i>
+                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">Telegram</span>
+                </a>
+                <a href="https://youtube.com/@PSIXOmaniya/videos" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">YouTube</span>
+                </a>
+                <a href="https://vk.ru/psixomaniya" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+                    <i class="fa-brands fa-vk"></i>
+                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">ВКонтакте</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 px-6 relative overflow-hidden reveal">
+        <div class="max-w-3xl mx-auto glass-card rounded-3xl p-12 text-center border border-neonPurple/20 shadow-neon-glow">
+            <h2 class="font-syne text-3xl md:text-4xl font-bold mb-8 uppercase tracking-tighter">Contact:</h2>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="https://t.me/PSIXOmaniyaBusiness_bot" target="_blank" class="px-8 py-4 bg-neonPurple rounded-xl font-bold hover:bg-neonViolet transition-all uppercase text-sm tracking-widest">
+                    Telegram Bot
+                </a>
+                <a href="mailto:PSIXOmaniya@outlook.com" class="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all text-sm tracking-widest">
+                    PSIXOmaniya@outlook.com
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-[10px] uppercase tracking-widest reveal">
+        &copy; 2026 PSIXOmaniya. All Rights Reserved.
+    </footer>
+
+    <script>
+        // 1. Появление всего сайта после загрузки
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+
+        // 2. Анимация названия вкладки
+        const titleText = "PSIXOmaniya";
+        let currentIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 200;
+
+        function animateTitle() {
+            if (!isDeleting) {
+                document.title = titleText.substring(0, currentIndex + 1);
+                currentIndex++;
+                typingSpeed = 200;
+                if (currentIndex === titleText.length) {
+                    isDeleting = true;
+                    typingSpeed = 2000;
+                }
+            } else {
+                document.title = titleText.substring(0, currentIndex - 1) || "P";
+                currentIndex--;
+                typingSpeed = 60;
+                if (currentIndex <= 1) {
+                    isDeleting = false;
+                    typingSpeed = 500;
+                }
+            }
+            setTimeout(animateTitle, typingSpeed);
+        }
+        animateTitle();
+
+        // 3. Улучшенный Scroll Reveal (Intersection Observer)
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Если нужно анимировать только один раз, раскомментируйте:
+                    // revealObserver.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // 4. Mobile Menu
+        const btn = document.getElementById('mobile-menu-btn');
+        btn.addEventListener('click', () => {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('hidden');
+            nav.classList.toggle('flex');
+            nav.classList.toggle('flex-col');
+            nav.classList.toggle('absolute');
+            nav.classList.toggle('top-16');
+            nav.classList.toggle('left-0');
+            nav.classList.toggle('w-full');
+            nav.classList.toggle('bg-darkBg');
+            nav.classList.toggle('p-6');
+            nav.classList.toggle('z-50');
+        });
+    </script>
+</body>
+</html>
