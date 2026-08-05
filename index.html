@@ -4,203 +4,479 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>P</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#090514',
-                        neonPurple: '#9d4edd',
-                        neonViolet: '#7b2cbf',
-                        neonPink: '#ff007f',
+                        darkBg: '#06020f',
+                        neonPurple: '#b24bf3',
+                        neonViolet: '#7c3aed',
+                        neonPink: '#ff2d95',
+                        surface: '#0d0918',
                     },
                     fontFamily: {
                         sans: ['Montserrat', 'sans-serif'],
                         syne: ['Syne', 'sans-serif'],
                     },
                     boxShadow: {
-                        'neon-glow': '0 0 15px rgba(157, 78, 221, 0.4)',
+                        'neon-glow': '0 0 30px rgba(178, 75, 243, 0.25), 0 0 60px rgba(178, 75, 243, 0.1)',
+                        'neon-glow-strong': '0 0 40px rgba(178, 75, 243, 0.4), 0 0 80px rgba(178, 75, 243, 0.15)',
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Плавное появление всего тела сайта */
         body { 
-            background-color: #090514; 
+            background-color: #06020f; 
             color: #f3f4f6; 
             overflow-x: hidden;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        body.loaded {
+        body.loaded { opacity: 1; }
+
+        .glow-sphere { 
+            position: fixed; 
+            border-radius: 50%; 
+            filter: blur(140px); 
+            opacity: 0.2; 
+            z-index: 0; 
+            pointer-events: none; 
+            animation: floatSphere 20s ease-in-out infinite;
+        }
+        .glow-sphere:nth-child(2) { animation-delay: -10s; animation-duration: 25s; }
+
+        @keyframes floatSphere {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -40px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(50px); 
+            transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1); 
+            will-change: transform, opacity;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .glass-card { 
+            background: rgba(13, 9, 24, 0.55); 
+            backdrop-filter: blur(20px) saturate(1.2); 
+            border: 1px solid rgba(178, 75, 243, 0.08);
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .yandex-svg { width: 40px; height: 40px; fill: currentColor; }
+
+        .delay-1 { transition-delay: 0.15s; }
+        .delay-2 { transition-delay: 0.35s; }
+        .delay-3 { transition-delay: 0.55s; }
+
+        .hero-img-wrapper {
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .hero-img-wrapper:hover {
+            transform: perspective(1000px) rotateY(-3deg) rotateX(2deg) scale(1.02);
+        }
+        .hero-img-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(178,75,243,0.4), rgba(255,45,149,0.2), rgba(124,58,237,0.3));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            filter: blur(8px);
+        }
+        .hero-img-wrapper:hover::before { opacity: 1; }
+
+        .hero-img-border {
+            position: relative;
+            border-radius: 1rem;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(178,75,243,0.3), rgba(124,58,237,0.15), rgba(178,75,243,0.3));
+            background-size: 200% 200%;
+            animation: borderFlow 4s ease infinite;
+        }
+        .hero-img-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(178,75,243,0.5), rgba(255,45,149,0.3), rgba(124,58,237,0.5), rgba(178,75,243,0.5));
+            background-size: 300% 300%;
+            animation: borderRotate 6s linear infinite;
+            z-index: -1;
+            filter: blur(6px);
+            opacity: 0.6;
+        }
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes borderRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #b24bf3, #ff2d95);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:hover {
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 0 30px rgba(178, 75, 243, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .btn-secondary:hover {
+            border-color: rgba(178, 75, 243, 0.5);
+            box-shadow: 0 0 20px rgba(178, 75, 243, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .platform-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(178,75,243,0.15), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .platform-card:hover::after { opacity: 1; }
+
+        .social-link {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .social-link::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translateX(-50%);
+        }
+        .social-link:hover::after { width: 100%; }
+        .social-link:hover {
+            transform: translateY(-4px);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #b24bf3, #ff2d95);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .contact-glow {
+            position: relative;
+        }
+        .contact-glow::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, rgba(178,75,243,0.3), rgba(255,45,149,0.2), rgba(124,58,237,0.3));
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.5;
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; transform: scale(0.98); }
+            50% { opacity: 0.6; transform: scale(1.02); }
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #b24bf3, #ff2d95);
+            transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        .mobile-menu {
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .mobile-menu.open {
+            transform: translateY(0);
             opacity: 1;
         }
 
-        .glow-sphere { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.3; z-index: 0; pointer-events: none; }
-        
-        /* Улучшенный Scroll Reveal */
-        .reveal { 
-            opacity: 0; 
-            transform: translateY(40px); 
-            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); 
-            will-change: transform, opacity;
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .reveal.active { 
-            opacity: 1; 
-            transform: translateY(0); 
+        .stagger-item.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .glass-card { background: rgba(18, 12, 36, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(157, 78, 221, 0.1); }
-        .yandex-svg { width: 40px; height: 40px; fill: currentColor; }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .gradient-text {
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
 
-        /* Задержки для элементов в Hero секции для эффекта очереди */
-        .delay-1 { transition-delay: 0.2s; }
-        .delay-2 { transition-delay: 0.4s; }
-        .delay-3 { transition-delay: 0.6s; }
+        .hover-spotify:hover {
+            border-color: rgba(29, 215, 96, 0.5);
+            box-shadow: 0 8px 32px rgba(29, 215, 96, 0.15), 0 0 20px rgba(29, 215, 96, 0.1);
+        }
+        .hover-spotify:hover i { color: #1DB954; }
+        .hover-spotify:hover::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(29,215,96,0.2), transparent 60%);
+        }
+
+        .hover-yandex:hover {
+            border-color: rgba(255, 204, 0, 0.5);
+            box-shadow: 0 8px 32px rgba(255, 204, 0, 0.15), 0 0 20px rgba(255, 204, 0, 0.1);
+        }
+        .hover-yandex:hover svg { color: #FFCC00; }
+        .hover-yandex:hover::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,204,0,0.2), transparent 60%);
+        }
+
+        .hover-vk-music:hover {
+            border-color: rgba(0, 119, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 119, 255, 0.15), 0 0 20px rgba(0, 119, 255, 0.1);
+        }
+        .hover-vk-music:hover i { color: #0077FF; }
+        .hover-vk-music:hover::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0,119,255,0.2), transparent 60%);
+        }
+
+        .hover-apple:hover {
+            border-color: rgba(252, 60, 68, 0.5);
+            box-shadow: 0 8px 32px rgba(252, 60, 68, 0.15), 0 0 20px rgba(252, 60, 68, 0.1);
+        }
+        .hover-apple:hover i { color: #FC3C44; }
+        .hover-apple:hover::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(252,60,68,0.2), transparent 60%);
+        }
+
+        .hover-telegram { transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease; }
+        .hover-telegram:hover { color: #24A1DE; text-shadow: 0 0 20px rgba(36, 161, 222, 0.5); }
+        .hover-telegram:hover::after { background: #24A1DE; }
+
+        .hover-youtube { transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease; }
+        .hover-youtube:hover { color: #FF0000; text-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+        .hover-youtube:hover::after { background: #FF0000; }
+
+        .hover-vk { transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease; }
+        .hover-vk:hover { color: #0077FF; text-shadow: 0 0 20px rgba(0, 119, 255, 0.5); }
+        .hover-vk:hover::after { background: #0077FF; }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-neonPurple">
+<body class="font-sans antialiased selection:bg-neonPurple selection:text-white">
 
-    <!-- Background Elements -->
-    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] glow-sphere bg-neonPurple"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] glow-sphere bg-neonViolet"></div>
+    <div class="noise-overlay"></div>
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-    <header class="fixed top-0 left-0 w-full z-50 glass-card border-b border-white/5 py-4 px-6">
+    <div class="fixed top-[-15%] left-[-15%] w-[60vw] h-[60vw] glow-sphere bg-neonPurple"></div>
+    <div class="fixed bottom-[-15%] right-[-15%] w-[60vw] h-[60vw] glow-sphere bg-neonViolet"></div>
+
+    <header class="fixed top-0 left-0 w-full z-50 glass-card border-b border-white/5 py-4 px-6 transition-all duration-500" id="header">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="#" class="font-syne text-xl md:text-2xl font-extrabold tracking-widest text-neonPurple hover:brightness-125 transition-all">
+            <a href="#" class="font-syne text-xl md:text-2xl font-extrabold tracking-widest text-neonPurple hover:brightness-125 transition-all duration-300">
                 PSIXOmaniya
             </a>
-            
-            <nav class="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest">
-                <a href="#music" class="hover:text-neonPurple transition-colors">Music</a>
-                <a href="#socials" class="hover:text-neonPurple transition-colors">Social</a>
-                <a href="#contact" class="hover:text-neonPurple transition-colors">Contact</a>
+
+            <nav class="hidden md:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest">
+                <a href="#music" class="nav-link hover:text-neonPurple transition-colors duration-300">Music</a>
+                <a href="#socials" class="nav-link hover:text-neonPurple transition-colors duration-300">Social</a>
+                <a href="#contact" class="nav-link hover:text-neonPurple transition-colors duration-300">Contact</a>
             </nav>
 
-            <button id="mobile-menu-btn" class="md:hidden text-white"><i class="fa-solid fa-bars text-xl"></i></button>
+            <button id="mobile-menu-btn" class="md:hidden text-white relative z-50 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-bars text-xl transition-transform duration-300" id="menu-icon"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-darkBg/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden">
+        <a href="#music" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Music</a>
+        <a href="#socials" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Social</a>
+        <a href="#contact" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Contact</a>
+    </div>
+
     <section class="relative min-h-screen flex items-center justify-center pt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-6">
-            
+
             <div class="text-center lg:text-left order-2 lg:order-1 reveal delay-1">
-                <h1 class="font-syne text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-6">
-                    PSIXO<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neonPurple to-neonPink">MANIYA</span>
+                <h1 class="font-syne text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                    PSIXO<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neonPurple via-neonPink to-neonViolet gradient-text">MANIYA</span>
                 </h1>
                 <div class="flex flex-wrap gap-4 justify-center lg:justify-start reveal delay-2">
-                    <a href="#music" class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-neonPurple hover:text-white transition-all duration-300 uppercase text-sm tracking-widest">
+                    <a href="#music" class="btn-primary px-8 py-4 bg-white text-black font-bold rounded-full uppercase text-sm tracking-widest">
                         Listen to releases
                     </a>
-                    <a href="#contact" class="px-8 py-4 border border-white/20 rounded-full hover:border-neonPurple transition-all duration-300 uppercase text-sm tracking-widest">
+                    <a href="#contact" class="btn-secondary px-8 py-4 border border-white/20 rounded-full uppercase text-sm tracking-widest">
                         Contact
                     </a>
                 </div>
             </div>
 
             <div class="flex justify-center order-1 lg:order-2 reveal delay-3">
-                <div class="relative w-full max-w-[350px] aspect-[4/5] group">
-                    <div class="absolute -inset-1 bg-neonPurple rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                    <img 
-                        src="RoeMHZYAS3v3hKSSC2ZPpL5zzQ4_cUW6cO3BsfjyF_6mTJC_sJCMSsGXvgaZWVJo03EO-w0htNrWceg3Aebs0tW9.jpg" 
-                        alt="PSIXOmaniya" 
-                        class="relative rounded-2xl w-full h-full object-cover border border-white/10"
-                        onerror="this.src='https://placehold.co/600x800/120c24/9d4edd?text=PSIXOmaniya'"
-                    >
+                <div class="hero-img-wrapper w-full max-w-[350px]">
+                    <div class="hero-img-border">
+                        <img 
+                            src="RoeMHZYAS3v3hKSSC2ZPpL5zzQ4_cUW6cO3BsfjyF_6mTJC_sJCMSsGXvgaZWVJo03EO-w0htNrWceg3Aebs0tW9.jpg" 
+                            alt="PSIXOmaniya" 
+                            class="relative rounded-2xl w-full h-auto object-contain border border-white/10"
+                            onerror="this.src='https://placehold.co/600x800/0d0918/b24bf3?text=PSIXOmaniya'"
+                        >
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Music Platforms -->
-    <section id="music" class="py-24 px-6 relative z-10 reveal">
+    <section id="music" class="py-28 px-6 relative z-10 reveal">
         <div class="max-w-5xl mx-auto">
-            <h2 class="font-syne text-3xl md:text-5xl font-bold text-center mb-16 uppercase tracking-tighter">Music platforms</h2>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-                <a href="https://open.spotify.com/artist/6aKyhyRO1WQ9zYL8P8fQby" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
-                    <i class="fa-brands fa-spotify text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+            <h2 class="font-syne text-3xl md:text-5xl font-bold text-center mb-20 uppercase tracking-tighter">Music platforms</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <a href="https://open.spotify.com/artist/6aKyhyRO1WQ9zYL8P8fQby" target="_blank" class="platform-card glass-card hover-spotify p-8 rounded-2xl flex flex-col items-center group text-center">
+                    <i class="fa-brands fa-spotify text-4xl mb-4 group-hover:scale-110 transition-transform duration-500"></i>
                     <span class="text-[10px] font-bold uppercase tracking-widest">Spotify</span>
                 </a>
 
-                <a href="https://music.yandex.ru/artist/21793367" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
-                    <svg class="yandex-svg mb-4 group-hover:scale-110 transition-transform" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
+                <a href="https://music.yandex.ru/artist/21793367" target="_blank" class="platform-card glass-card hover-yandex p-8 rounded-2xl flex flex-col items-center group text-center">
+                    <svg class="yandex-svg mb-4 group-hover:scale-110 transition-transform duration-500" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
                         <path d="M345.1 379.8L257.7 576L194 576L290 366.2C244.9 343.3 214.8 301.8 214.8 225.1C214.7 117.7 282.8 64 363.7 64L446 64L446 576L390.9 576L390.9 379.8L345.1 379.8zM390.9 110.5L361.5 110.5C317.1 110.5 274.1 139.9 274.1 225.1C274.1 307.4 313.5 333.9 361.5 333.9L390.9 333.9L390.9 110.5z"/>
                     </svg>
                     <span class="text-[10px] font-bold uppercase tracking-widest">Yandex Music</span>
                 </a>
 
-                <a href="https://vk.ru/artist/psixomaniya" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
-                    <i class="fa-brands fa-vk text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+                <a href="https://vk.ru/artist/psixomaniya" target="_blank" class="platform-card glass-card hover-vk-music p-8 rounded-2xl flex flex-col items-center group text-center">
+                    <i class="fa-brands fa-vk text-4xl mb-4 group-hover:scale-110 transition-transform duration-500"></i>
                     <span class="text-[10px] font-bold uppercase tracking-widest">VK Music</span>
                 </a>
-                <a href="https://music.apple.com/ru/artist/psixomaniya/1734721240" target="_blank" class="glass-card p-8 rounded-2xl flex flex-col items-center hover:bg-neonPurple/10 transition-colors group text-center">
-                    <i class="fa-brands fa-apple text-4xl mb-4 group-hover:scale-110 transition-transform"></i>
+                <a href="https://music.apple.com/ru/artist/psixomaniya/1734721240" target="_blank" class="platform-card glass-card hover-apple p-8 rounded-2xl flex flex-col items-center group text-center">
+                    <i class="fa-brands fa-apple text-4xl mb-4 group-hover:scale-110 transition-transform duration-500"></i>
                     <span class="text-[10px] font-bold uppercase tracking-widest">Apple Music</span>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Social Media -->
-    <section id="socials" class="py-24 px-6 bg-white/5 reveal">
+    <section id="socials" class="py-28 px-6 bg-white/[0.02] reveal">
         <div class="max-w-5xl mx-auto text-center">
-            <h2 class="font-syne text-3xl md:text-5xl font-bold mb-16 uppercase tracking-tighter">Social media</h2>
-            <div class="flex flex-wrap justify-center gap-12">
-                <a href="https://t.me/PSIXOmaniya_music" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+            <h2 class="font-syne text-3xl md:text-5xl font-bold mb-20 uppercase tracking-tighter">Social media</h2>
+            <div class="flex flex-wrap justify-center gap-16">
+                <a href="https://t.me/PSIXOmaniya_music" target="_blank" class="social-link hover-telegram text-4xl flex flex-col items-center">
                     <i class="fa-brands fa-telegram"></i>
-                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">Telegram</span>
+                    <span class="text-[10px] mt-3 uppercase tracking-[0.2em] font-bold">Telegram</span>
                 </a>
-                <a href="https://youtube.com/@PSIXOmaniya/videos" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+                <a href="https://youtube.com/@PSIXOmaniya/videos" target="_blank" class="social-link hover-youtube text-4xl flex flex-col items-center">
                     <i class="fa-brands fa-youtube"></i>
-                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">YouTube</span>
+                    <span class="text-[10px] mt-3 uppercase tracking-[0.2em] font-bold">YouTube</span>
                 </a>
-                <a href="https://vk.ru/psixomaniya" target="_blank" class="text-4xl hover:text-neonPurple transition-colors flex flex-col items-center">
+                <a href="https://vk.ru/psixomaniya" target="_blank" class="social-link hover-vk text-4xl flex flex-col items-center">
                     <i class="fa-brands fa-vk"></i>
-                    <span class="text-[10px] mt-2 uppercase tracking-[0.2em] font-bold">ВКонтакте</span>
+                    <span class="text-[10px] mt-3 uppercase tracking-[0.2em] font-bold">ВКонтакте</span>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-24 px-6 relative overflow-hidden reveal">
-        <div class="max-w-3xl mx-auto glass-card rounded-3xl p-12 text-center border border-neonPurple/20 shadow-neon-glow">
-            <h2 class="font-syne text-3xl md:text-4xl font-bold mb-8 uppercase tracking-tighter">Contact:</h2>
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <a href="https://t.me/PSIXOmaniyaBusiness_bot" target="_blank" class="px-8 py-4 bg-neonPurple rounded-xl font-bold hover:bg-neonViolet transition-all uppercase text-sm tracking-widest">
-                    Telegram Bot
-                </a>
-                <a href="mailto:PSIXOmaniya@outlook.com" class="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all text-sm tracking-widest">
-                    PSIXOmaniya@outlook.com
-                </a>
+    <section id="contact" class="py-28 px-6 relative overflow-hidden reveal">
+        <div class="max-w-3xl mx-auto contact-glow">
+            <div class="glass-card rounded-3xl p-12 md:p-16 text-center border border-neonPurple/15 shadow-neon-glow">
+                <h2 class="font-syne text-3xl md:text-4xl font-bold mb-10 uppercase tracking-tighter">Contact:</h2>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <a href="https://t.me/PSIXOmaniyaBusiness_bot" target="_blank" class="px-8 py-4 bg-neonPurple rounded-xl font-bold hover:bg-neonViolet transition-all duration-300 uppercase text-sm tracking-widest hover:shadow-neon-glow-strong">
+                        Telegram Bot
+                    </a>
+                    <a href="mailto:PSIXOmaniya@outlook.com" class="px-6 sm:px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all duration-300 text-[11px] sm:text-sm tracking-widest hover:border-neonPurple/30 whitespace-nowrap">
+                        PSIXOmaniya@outlook.com
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-[10px] uppercase tracking-widest reveal">
+    <footer class="py-14 border-t border-white/5 text-center text-gray-500 text-[10px] uppercase tracking-widest reveal">
         &copy; 2026 PSIXOmaniya. All Rights Reserved.
     </footer>
 
     <script>
-        // 1. Появление всего сайта после загрузки
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
             }, 100);
         });
 
-        // 2. Анимация названия вкладки
         const titleText = "PSIXOmaniya";
         let currentIndex = 0;
         let isDeleting = false;
@@ -228,38 +504,91 @@
         }
         animateTitle();
 
-        // 3. Улучшенный Scroll Reveal (Intersection Observer)
         const revealOptions = {
-            threshold: 0.15,
-            rootMargin: "0px 0px -50px 0px"
+            threshold: 0.12,
+            rootMargin: "0px 0px -60px 0px"
         };
 
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    // Если нужно анимировать только один раз, раскомментируйте:
-                    // revealObserver.unobserve(entry.target);
                 }
             });
         }, revealOptions);
 
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // 4. Mobile Menu
+        const staggerObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.stagger-item').forEach(el => staggerObserver.observe(el));
+
         const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        let menuOpen = false;
+
         btn.addEventListener('click', () => {
-            const nav = document.querySelector('nav');
-            nav.classList.toggle('hidden');
-            nav.classList.toggle('flex');
-            nav.classList.toggle('flex-col');
-            nav.classList.toggle('absolute');
-            nav.classList.toggle('top-16');
-            nav.classList.toggle('left-0');
-            nav.classList.toggle('w-full');
-            nav.classList.toggle('bg-darkBg');
-            nav.classList.toggle('p-6');
-            nav.classList.toggle('z-50');
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                menu.classList.add('open');
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-xmark');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.remove('open');
+                menuIcon.classList.remove('fa-xmark');
+                menuIcon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            }
+        });
+
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                menu.classList.remove('open');
+                menuIcon.classList.remove('fa-xmark');
+                menuIcon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            });
+        });
+
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+
+        const header = document.getElementById('header');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            const progress = (currentScroll / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('scrollProgress').style.width = progress + '%';
+
+            if (currentScroll > 100) {
+                header.classList.add('py-3');
+                header.classList.remove('py-4');
+                header.style.background = 'rgba(6, 2, 15, 0.8)';
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-3');
+                header.style.background = '';
+            }
+            lastScroll = currentScroll;
         });
     </script>
 </body>
