@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #040406;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .crt-overlay {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+            background-size: 100% 4px;
+            opacity: 0.6;
+        }
+
+        .crt-vignette {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            pointer-events: none;
+            z-index: 45;
+            background: radial-gradient(circle, transparent 45%, rgba(0, 0, 0, 0.95) 100%);
+        }
+
+        .ambient-glow {
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 60vw; 
+            height: 60vw; 
+            max-width: 500px;
+            background: #8a0f21; 
+            border-radius: 50%; 
+            filter: blur(140px); 
+            opacity: 0.22; 
+            z-index: 0; 
+            pointer-events: none;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% {
+                opacity: 0.18;
+                transform: scale(1) translateY(0);
+                filter: drop-shadow(0 0 2px rgba(230, 28, 56, 0.2));
+            }
+            50% {
+                opacity: 0.65;
+                transform: scale(1.08) translateY(-6px);
+                filter: drop-shadow(0 0 12px rgba(230, 28, 56, 0.7));
+            }
+        }
+
+        .pixel-heart {
+            color: #e61c38;
+            pointer-events: none;
+            z-index: 10;
+            width: min(50vw, 240px);
+            height: min(50vw, 240px);
+            animation: heartPulse 4.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="crt-overlay"></div>
+    <div class="crt-vignette"></div>
+    <div class="ambient-glow"></div>
+
+    <svg class="pixel-heart" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+</body>
+</html>

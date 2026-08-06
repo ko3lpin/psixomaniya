@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Follow You...</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Share+Tech+Mono&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    darkBg: '#040406',
+                    darkCard: '#0a0a0f',
+                    crtRed: '#e61c38',
+                    crtWhite: '#d1e2e6',
+                },
+                fontFamily: {
+                    sans: ['Montserrat', 'sans-serif'],
+                    mono: ['"Share Tech Mono"', 'monospace'],
+                    syne: ['Syne', 'sans-serif'],
+                },
+            }
+        }
+    }
+</script>
+<style>
+    body { 
+        background-color: #040406; 
+        color: #d1d5db; 
+        overflow-x: hidden;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+    }
+    body.loaded { opacity: 1; }
+
+    .crt-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 50;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+        background-size: 100% 4px;
+        opacity: 0.6;
+    }
+
+    .crt-vignette {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 45;
+        background: radial-gradient(circle, transparent 45%, rgba(0, 0, 0, 0.95) 100%);
+    }
+
+    .ambient-glow {
+        position: absolute; 
+        top: 30%; 
+        left: 50%; 
+        transform: translate(-50%, -50%);
+        width: 60vw; 
+        height: 60vw; 
+        max-width: 500px;
+        background: #8a0f21; 
+        border-radius: 50%; 
+        filter: blur(140px); 
+        opacity: 0.22; 
+        z-index: 0; 
+        pointer-events: none;
+        transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease;
+    }
+
+    .ambient-glow.flash {
+        opacity: 0.65;
+        filter: blur(90px);
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    @keyframes heartPulse {
+        0%, 100% {
+            opacity: 0.18;
+            transform: scale(1) translateY(0);
+            filter: drop-shadow(0 0 2px rgba(230, 28, 56, 0.2));
+        }
+        50% {
+            opacity: 0.65;
+            transform: scale(1.08) translateY(-6px);
+            filter: drop-shadow(0 0 12px rgba(230, 28, 56, 0.7));
+        }
+    }
+
+    .pixel-heart {
+        position: absolute;
+        color: #e61c38;
+        pointer-events: none;
+        z-index: 1;
+        animation: heartPulse 4.5s ease-in-out infinite;
+    }
+
+    .platform-card {
+        background: rgba(10, 10, 15, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        transition: all 0.3s ease;
+    }
+    .platform-card:hover {
+        background: rgba(25, 12, 18, 0.92);
+        border-color: rgba(230, 28, 56, 0.55);
+        box-shadow: 0 0 22px rgba(230, 28, 56, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .crt-text-shadow {
+        text-shadow: 0 0 8px rgba(208, 224, 230, 0.3), -1px 0 2px rgba(230, 28, 56, 0.4);
+    }
+
+    .cover-art {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(230, 28, 56, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .cover-art:hover {
+        transform: scale(1.015);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(230, 28, 56, 0.35);
+    }
+
+    .yandex-svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .reveal { 
+        opacity: 0; 
+        transform: translateY(25px) scale(0.96); 
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .reveal.active { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
+
+    #intro-screen {
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        transform: scale(1);
+        filter: blur(0px);
+    }
+
+    #intro-screen.out {
+        opacity: 0;
+        transform: scale(1.35);
+        filter: blur(20px);
+        pointer-events: none;
+    }
+
+    .main-container {
+        transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), filter 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+        transform: scale(0.88);
+        filter: blur(12px);
+        opacity: 0;
+    }
+
+    .main-container.active {
+        transform: scale(1);
+        filter: blur(0px);
+        opacity: 1;
+    }
+
+    .neon-purple-btn {
+        background: rgba(10, 10, 15, 0.85);
+        border: 3px solid #b026ff;
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(176, 38, 255, 0.4), inset 0 0 20px rgba(176, 38, 255, 0.25);
+        text-shadow: 0 0 10px rgba(176, 38, 255, 0.8);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .neon-purple-btn:hover {
+        border-color: #d880ff;
+        box-shadow: 0 0 35px rgba(176, 38, 255, 0.9), inset 0 0 25px rgba(176, 38, 255, 0.6);
+        transform: scale(1.06);
+        color: #ffffff;
+    }
+
+    .neon-purple-btn.followed {
+        border-color: #e61c38 !important;
+        box-shadow: 0 0 50px rgba(230, 28, 56, 1), inset 0 0 30px rgba(230, 28, 56, 0.7) !important;
+        color: #ff4d6d !important;
+        text-shadow: 0 0 15px rgba(230, 28, 56, 1) !important;
+        transform: scale(1.08);
+    }
+
+    @keyframes burstParticle {
+        0% { opacity: 1; transform: translate(0, 0) scale(1); }
+        100% { opacity: 0; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(0); }
+    }
+    .burst-heart {
+        position: absolute;
+        pointer-events: none;
+        animation: burstParticle 0.9s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    .flash-overlay {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle, rgba(230, 28, 56, 0.35) 0%, rgba(0,0,0,0) 70%);
+        pointer-events: none;
+        opacity: 0;
+        z-index: 35;
+        transition: opacity 0.5s ease;
+    }
+    .flash-overlay.active {
+        opacity: 1;
+    }
+</style>
+</head>
+<body class="font-sans antialiased selection:bg-crtRed selection:text-white">
+<div class="crt-overlay"></div>
+<div class="crt-vignette"></div>
+<div id="ambient-glow" class="ambient-glow"></div>
+<div id="flash-overlay" class="flash-overlay"></div>
+
+<div id="intro-screen" class="fixed inset-0 z-40 flex items-center justify-center bg-darkBg px-4">
+    <button id="follow-btn" class="neon-purple-btn relative font-mono text-lg sm:text-2xl font-bold tracking-[0.3em] px-12 sm:px-16 py-5 sm:py-7 rounded-full uppercase flex items-center space-x-4 group">
+        <i id="btn-icon" class="fa-solid fa-plus text-lg sm:text-xl transition-transform duration-300 group-hover:rotate-90"></i>
+        <span id="btn-text">FOLLOW</span>
+    </button>
+</div>
+
+<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <svg class="pixel-heart top-[8%] left-[4%] w-14 h-14" style="animation-delay: 0s; animation-duration: 4.2s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[28%] left-[12%] w-10 h-10" style="animation-delay: 1.8s; animation-duration: 3.8s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[48%] left-[3%] w-20 h-20" style="animation-delay: 0.9s; animation-duration: 5.2s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[70%] left-[10%] w-12 h-12" style="animation-delay: 2.7s; animation-duration: 4.0s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[88%] left-[5%] w-16 h-16" style="animation-delay: 1.2s; animation-duration: 4.6s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[6%] right-[6%] w-16 h-16" style="animation-delay: 1.5s; animation-duration: 4.8s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[25%] right-[11%] w-12 h-12" style="animation-delay: 0.4s; animation-duration: 3.6s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[52%] right-[4%] w-24 h-24" style="animation-delay: 2.1s; animation-duration: 5.5s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[74%] right-[12%] w-10 h-10" style="animation-delay: 3.2s; animation-duration: 4.1s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[90%] right-[5%] w-16 h-16" style="animation-delay: 0.7s; animation-duration: 4.4s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart top-[2%] left-[45%] w-10 h-10" style="animation-delay: 2.5s; animation-duration: 3.9s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+
+    <svg class="pixel-heart bottom-[2%] left-[52%] w-12 h-12" style="animation-delay: 1.1s; animation-duration: 4.7s;" viewBox="0 0 11 9" fill="currentColor" shape-rendering="crispEdges">
+        <path d="M1,0 h3 v1 h-3 z M6,0 h3 v1 h-3 z M0,1 h5 v1 h-5 z M5,1 h1 v1 h-1 z M6,1 h5 v1 h-5 z M0,2 h11 v1 h-11 z M0,3 h11 v1 h-11 z M1,4 h9 v1 h-9 z M2,5 h7 v1 h-7 z M3,6 h5 v1 h-5 z M4,7 h3 v1 h-3 z M5,8 h1 v1 h-1 z"/>
+    </svg>
+</div>
+
+<div id="main-container" class="main-container relative z-10 min-h-screen flex flex-col items-center py-12 px-6">
+    
+    <header class="mb-10 reveal">
+        <a href="/" class="font-mono text-xs tracking-[0.3em] text-gray-400 hover:text-crtRed transition-colors uppercase">
+            [ PSIXOmaniya ]
+        </a>
+    </header>
+
+    <main class="w-full max-w-md">
+        
+        <div class="mb-8 reveal" style="transition-delay: 0.1s;">
+            <div class="aspect-square w-full relative">
+                <img 
+                    src="followyouLogo.gif" 
+                    alt="Follow You Cover Art" 
+                    class="cover-art rounded-lg w-full h-full object-cover"
+                >
+            </div>
+        </div>
+
+        <div class="text-center mb-10 reveal" style="transition-delay: 0.2s;">
+            <h1 class="crt-text-shadow font-syne text-4xl font-black tracking-tight text-crtWhite uppercase mb-1">
+                Follow You
+            </h1>
+            <p class="text-crtRed font-mono text-sm tracking-[0.25em] uppercase font-bold">PSIXOmaniya</p>
+        </div>
+
+        <div class="space-y-3 mb-14 reveal" style="transition-delay: 0.3s;">
+            
+            <a href="https://music.yandex.ru/album/43230113" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                <div class="flex items-center space-x-4">
+                    <svg class="yandex-svg text-gray-300 group-hover:text-crtRed transition-colors" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M345.1 379.8L257.7 576L194 576L290 366.2C244.9 343.3 214.8 301.8 214.8 225.1C214.7 117.7 282.8 64 363.7 64L446 64L446 576L390.9 576L390.9 379.8L345.1 379.8zM390.9 110.5L361.5 110.5C317.1 110.5 274.1 139.9 274.1 225.1C274.1 307.4 313.5 333.9 361.5 333.9L390.9 333.9L390.9 110.5z"/>
+                    </svg>
+                    <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase group-hover:text-white transition-colors">Яндекс Музыка</span>
+                </div>
+                <span class="font-mono text-[11px] text-gray-400 group-hover:text-crtRed transition-colors uppercase">Слушать</span>
+            </a>
+
+            <a href="https://vk.ru/music/album/-2000665982_28665982" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                <div class="flex items-center space-x-4">
+                    <i class="fa-brands fa-vk text-xl text-gray-300 group-hover:text-crtRed transition-colors"></i>
+                    <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase group-hover:text-white transition-colors">VK Музыка</span>
+                </div>
+                <span class="font-mono text-[11px] text-gray-400 group-hover:text-crtRed transition-colors uppercase">Слушать</span>
+            </a>
+
+            <a href="https://open.spotify.com/album/7F2DOrkRxNAPx1b20mvSfm?si=l6UOjqvzTIWotgFE08w1_Q" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                <div class="flex items-center space-x-4">
+                    <i class="fa-brands fa-spotify text-xl text-gray-300 group-hover:text-crtRed transition-colors"></i>
+                    <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase group-hover:text-white transition-colors">Spotify</span>
+                </div>
+                <span class="font-mono text-[11px] text-gray-400 group-hover:text-crtRed transition-colors uppercase">Listen</span>
+            </a>
+
+            <a href="https://music.apple.com/ru/album/follow-you-single/6795306019" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                <div class="flex items-center space-x-4">
+                    <i class="fa-brands fa-apple text-xl text-gray-300 group-hover:text-crtRed transition-colors"></i>
+                    <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase group-hover:text-white transition-colors">Apple Music</span>
+                </div>
+                <span class="font-mono text-[11px] text-gray-400 group-hover:text-crtRed transition-colors uppercase">Listen</span>
+            </a>
+
+            <a href="https://youtu.be/qMebORkrUrE" target="_blank" class="platform-card flex items-center justify-between p-4 rounded-xl group">
+                <div class="flex items-center space-x-4">
+                    <i class="fa-brands fa-youtube text-xl text-gray-300 group-hover:text-crtRed transition-colors"></i>
+                    <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase group-hover:text-white transition-colors">YouTube</span>
+                </div>
+                <span class="font-mono text-[11px] text-gray-400 group-hover:text-crtRed transition-colors uppercase">Play</span>
+            </a>
+
+        </div>
+    </main>
+
+    <footer class="mt-auto pt-6 flex flex-col items-center space-y-4 reveal" style="transition-delay: 0.4s;">
+        <div class="flex space-x-7 text-lg text-gray-500">
+            <a href="https://t.me/PSIXOmaniya_music" target="_blank" class="hover:text-crtRed transition-colors"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://vk.ru/psixomaniya" target="_blank" class="hover:text-crtRed transition-colors"><i class="fa-brands fa-vk"></i></a>
+            <a href="https://youtube.com/@PSIXOmaniya" target="_blank" class="hover:text-crtRed transition-colors"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+        <p class="text-[10px] text-gray-600 font-mono tracking-widest uppercase">© 2026 PSIXOmaniya</p>
+    </footer>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+    });
+
+    const followBtn = document.getElementById('follow-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    const introScreen = document.getElementById('intro-screen');
+    const mainContainer = document.getElementById('main-container');
+    const ambientGlow = document.getElementById('ambient-glow');
+    const flashOverlay = document.getElementById('flash-overlay');
+
+    followBtn.addEventListener('click', () => {
+        followBtn.disabled = true;
+
+        followBtn.classList.add('followed');
+        btnIcon.className = "fa-solid fa-check text-lg sm:text-xl transition-all duration-300 scale-125";
+        btnText.textContent = "FOLLOWED";
+
+        createParticleBurst(followBtn);
+
+        setTimeout(() => {
+            ambientGlow.classList.add('flash');
+            flashOverlay.classList.add('active');
+        }, 300);
+
+        setTimeout(() => {
+            introScreen.classList.add('out');
+            mainContainer.classList.add('active');
+
+            setTimeout(() => {
+                flashOverlay.classList.remove('active');
+                ambientGlow.classList.remove('flash');
+            }, 400);
+
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach((el, index) => {
+                    setTimeout(() => {
+                        el.classList.add('active');
+                    }, index * 90);
+                });
+            }, 200);
+
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 900);
+        }, 750);
+    });
+
+    function createParticleBurst(element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < 18; i++) {
+            const heart = document.createElement('i');
+            heart.className = 'fa-solid fa-heart burst-heart text-base text-crtRed';
+            
+            const angle = (i / 18) * Math.PI * 2;
+            const distance = 80 + Math.random() * 70;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+
+            heart.style.left = `${centerX}px`;
+            heart.style.top = `${centerY}px`;
+            heart.style.setProperty('--tw-translate-x', `${tx}px`);
+            heart.style.setProperty('--tw-translate-y', `${ty}px`);
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 900);
+        }
+    }
+
+    const titleText = "Follow You...";
+    let titleIndex = 1;
+    let isDeleting = false;
+    let typingSpeed = 200;
+
+    function animateTitle() {
+        document.title = titleText.substring(0, titleIndex);
+
+        if (!isDeleting) {
+            titleIndex++;
+            typingSpeed = 200;
+            if (titleIndex > titleText.length) {
+                isDeleting = true;
+                typingSpeed = 2000;
+            }
+        } else {
+            titleIndex--;
+            typingSpeed = 90;
+            if (titleIndex === 1) {
+                isDeleting = false;
+                typingSpeed = 600;
+            }
+        }
+        setTimeout(animateTitle, typingSpeed);
+    }
+    animateTitle();
+</script>
+</body>
+</html>
