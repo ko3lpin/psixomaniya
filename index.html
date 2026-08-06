@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -243,31 +243,6 @@
             50% { opacity: 0.6; transform: scale(1.02); }
         }
 
-        .nav-link {
-            position: relative;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: linear-gradient(90deg, #b24bf3, #ff2d95);
-            transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .nav-link:hover::after { width: 100%; }
-
-        .mobile-menu {
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .mobile-menu.open {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
         .stagger-item {
             opacity: 0;
             transform: translateY(20px);
@@ -335,9 +310,45 @@
         .hover-vk { transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease; }
         .hover-vk:hover { color: #0077FF; text-shadow: 0 0 20px rgba(0, 119, 255, 0.5); }
         .hover-vk:hover::after { background: #0077FF; }
+
+        .dock-nav-item {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 18px;
+            border-radius: 9999px;
+            color: #8E8E93;
+            transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            user-select: none;
+            min-width: 62px;
+        }
+        .dock-nav-item:hover {
+            color: #FFFFFF;
+        }
+        .dock-nav-item.active {
+            color: #FFFFFF;
+        }
+        .dock-nav-item.active i, .dock-nav-item.active span {
+            color: #FFFFFF;
+        }
+
+        .dock-pill-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), width 0.4s cubic-bezier(0.22, 1, 0.36, 1), height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+            will-change: transform, width, height;
+        }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-neonPurple selection:text-white">
+<body class="font-sans antialiased selection:bg-neonPurple selection:text-white pb-24">
 
     <div class="noise-overlay"></div>
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -345,31 +356,37 @@
     <div class="fixed top-[-15%] left-[-15%] w-[60vw] h-[60vw] glow-sphere bg-neonPurple"></div>
     <div class="fixed bottom-[-15%] right-[-15%] w-[60vw] h-[60vw] glow-sphere bg-neonViolet"></div>
 
-    <header class="fixed top-0 left-0 w-full z-50 glass-card border-b border-white/5 py-4 px-6 transition-all duration-500" id="header">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <header class="fixed top-0 left-0 w-full z-40 glass-card border-b border-white/5 py-4 px-6 transition-all duration-500" id="header">
+        <div class="max-w-7xl mx-auto flex items-center justify-center md:justify-start">
             <a href="#" class="font-syne text-xl md:text-2xl font-extrabold tracking-widest text-neonPurple hover:brightness-125 transition-all duration-300">
                 PSIXOmaniya
             </a>
-
-            <nav class="hidden md:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest">
-                <a href="#music" class="nav-link hover:text-neonPurple transition-colors duration-300">Music</a>
-                <a href="#socials" class="nav-link hover:text-neonPurple transition-colors duration-300">Social</a>
-                <a href="#contact" class="nav-link hover:text-neonPurple transition-colors duration-300">Contact</a>
-            </nav>
-
-            <button id="mobile-menu-btn" class="md:hidden text-white relative z-50 w-8 h-8 flex items-center justify-center">
-                <i class="fa-solid fa-bars text-xl transition-transform duration-300" id="menu-icon"></i>
-            </button>
         </div>
     </header>
 
-    <div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-darkBg/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden">
-        <a href="#music" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Music</a>
-        <a href="#socials" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Social</a>
-        <a href="#contact" class="text-2xl font-syne font-bold uppercase tracking-widest hover:text-neonPurple transition-colors mobile-nav-link">Contact</a>
+    <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+        <nav id="dock-nav" class="relative flex items-center gap-1 p-1.5 rounded-full bg-[#181622]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+            <div id="dock-pill" class="dock-pill-indicator"></div>
+            <a href="#hero" class="dock-nav-item active" data-section="hero">
+                <i class="fa-solid fa-house text-base mb-1"></i>
+                <span class="text-[10px] font-semibold tracking-tight">Home</span>
+            </a>
+            <a href="#music" class="dock-nav-item" data-section="music">
+                <i class="fa-solid fa-music text-base mb-1"></i>
+                <span class="text-[10px] font-semibold tracking-tight">Music</span>
+            </a>
+            <a href="#socials" class="dock-nav-item" data-section="socials">
+                <i class="fa-solid fa-share-nodes text-base mb-1"></i>
+                <span class="text-[10px] font-semibold tracking-tight">Social</span>
+            </a>
+            <a href="#contact" class="dock-nav-item" data-section="contact">
+                <i class="fa-solid fa-envelope text-base mb-1"></i>
+                <span class="text-[10px] font-semibold tracking-tight">Contact</span>
+            </a>
+        </nav>
     </div>
 
-    <section class="relative min-h-screen flex items-center justify-center pt-20">
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-6">
 
             <div class="text-center lg:text-left order-2 lg:order-1 reveal delay-1">
@@ -474,6 +491,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
+                updatePillPosition();
             }, 100);
         });
 
@@ -531,36 +549,6 @@
 
         document.querySelectorAll('.stagger-item').forEach(el => staggerObserver.observe(el));
 
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
-        let menuOpen = false;
-
-        btn.addEventListener('click', () => {
-            menuOpen = !menuOpen;
-            if (menuOpen) {
-                menu.classList.add('open');
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-xmark');
-                document.body.style.overflow = 'hidden';
-            } else {
-                menu.classList.remove('open');
-                menuIcon.classList.remove('fa-xmark');
-                menuIcon.classList.add('fa-bars');
-                document.body.style.overflow = '';
-            }
-        });
-
-        document.querySelectorAll('.mobile-nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                menuOpen = false;
-                menu.classList.remove('open');
-                menuIcon.classList.remove('fa-xmark');
-                menuIcon.classList.add('fa-bars');
-                document.body.style.overflow = '';
-            });
-        });
-
         document.querySelectorAll('.platform-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -572,7 +560,6 @@
         });
 
         const header = document.getElementById('header');
-        let lastScroll = 0;
 
         window.addEventListener('scroll', () => {
             const currentScroll = window.scrollY;
@@ -588,7 +575,68 @@
                 header.classList.remove('py-3');
                 header.style.background = '';
             }
-            lastScroll = currentScroll;
+        });
+
+        const dockNav = document.getElementById('dock-nav');
+        const dockPill = document.getElementById('dock-pill');
+        const dockItems = document.querySelectorAll('.dock-nav-item');
+        const sections = document.querySelectorAll('section[id]');
+        let isManualClick = false;
+        let clickTimer = null;
+
+        function updatePillPosition() {
+            const activeItem = document.querySelector('.dock-nav-item.active');
+            if (!activeItem || !dockPill || !dockNav) return;
+
+            const navRect = dockNav.getBoundingClientRect();
+            const itemRect = activeItem.getBoundingClientRect();
+
+            const x = itemRect.left - navRect.left;
+            const y = itemRect.top - navRect.top;
+
+            dockPill.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            dockPill.style.width = `${itemRect.width}px`;
+            dockPill.style.height = `${itemRect.height}px`;
+        }
+
+        function setActiveDockItem() {
+            if (isManualClick) return;
+
+            let scrollY = window.pageYOffset;
+
+            sections.forEach(current => {
+                const sectionHeight = current.offsetHeight;
+                const sectionTop = current.offsetTop - 200;
+                const sectionId = current.getAttribute('id');
+
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                    dockItems.forEach(item => {
+                        item.classList.remove('active');
+                        if (item.getAttribute('data-section') === sectionId) {
+                            item.classList.add('active');
+                        }
+                    });
+                    updatePillPosition();
+                }
+            });
+        }
+
+        window.addEventListener('scroll', setActiveDockItem);
+        window.addEventListener('resize', updatePillPosition);
+
+        dockItems.forEach(item => {
+            item.addEventListener('click', function() {
+                isManualClick = true;
+                clearTimeout(clickTimer);
+
+                dockItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                updatePillPosition();
+
+                clickTimer = setTimeout(() => {
+                    isManualClick = false;
+                }, 850);
+            });
         });
     </script>
 </body>
