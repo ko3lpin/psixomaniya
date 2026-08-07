@@ -34,6 +34,10 @@
         }
     </script>
     <style>
+        html, body, *, *::before, *::after {
+            cursor: none !important;
+        }
+
         body { 
             background-color: #06020f; 
             color: #f3f4f6; 
@@ -346,9 +350,49 @@
             pointer-events: none;
             will-change: transform, width, height;
         }
+
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #b24bf3;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: rgba(178, 75, 243, 0.3);
+            border: 2px solid #b24bf3;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(178, 75, 243, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease;
+        }
+
+        @media (pointer: coarse) {
+            .cursor, .cursor-trail { display: none; }
+            html, body, *, *::before, *::after { cursor: auto !important; }
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-neonPurple selection:text-white pb-24">
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-trail" id="cursorTrail"></div>
 
     <div class="noise-overlay"></div>
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -492,6 +536,32 @@
     </footer>
 
     <script>
+        const cursor = document.getElementById('cursor');
+        const cursorTrail = document.getElementById('cursorTrail');
+        let mouseX = 0, mouseY = 0;
+        let trailX = 0, trailY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        function animateTrail() {
+            trailX += (mouseX - trailX) * 0.15;
+            trailY += (mouseY - trailY) * 0.15;
+            cursorTrail.style.left = trailX + 'px';
+            cursorTrail.style.top = trailY + 'px';
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        document.querySelectorAll('a, button, .platform-card, .social-link, .dock-nav-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
