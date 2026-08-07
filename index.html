@@ -34,6 +34,10 @@
         }
     </script>
     <style>
+        html, body, *, *::before, *::after {
+            cursor: none !important;
+        }
+
         body { 
             background-color: #06020f; 
             color: #f3f4f6; 
@@ -318,12 +322,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 6px 18px;
+            padding: 6px 14px;
             border-radius: 9999px;
             color: #8E8E93;
             transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
             user-select: none;
-            min-width: 62px;
+            min-width: 56px;
         }
         .dock-nav-item:hover {
             color: #FFFFFF;
@@ -346,9 +350,49 @@
             pointer-events: none;
             will-change: transform, width, height;
         }
+
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #b24bf3;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: rgba(178, 75, 243, 0.3);
+            border: 2px solid #b24bf3;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(178, 75, 243, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease;
+        }
+
+        @media (pointer: coarse) {
+            .cursor, .cursor-trail { display: none; }
+            html, body, *, *::before, *::after { cursor: auto !important; }
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-neonPurple selection:text-white pb-24">
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-trail" id="cursorTrail"></div>
 
     <div class="noise-overlay"></div>
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -364,24 +408,28 @@
         </div>
     </header>
 
-    <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
-        <nav id="dock-nav" class="relative flex items-center gap-1 p-1.5 rounded-full bg-[#181622]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+    <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 max-w-[96vw]">
+        <nav id="dock-nav" class="relative flex items-center gap-0.5 sm:gap-1 p-1.5 rounded-full bg-[#181622]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
             <div id="dock-pill" class="dock-pill-indicator"></div>
             <a href="#hero" class="dock-nav-item active" data-section="hero">
                 <i class="fa-solid fa-house text-base mb-1"></i>
-                <span class="text-[10px] font-semibold tracking-tight">Home</span>
+                <span class="text-[9px] sm:text-[10px] font-semibold tracking-tight">Home</span>
             </a>
             <a href="#music" class="dock-nav-item" data-section="music">
                 <i class="fa-solid fa-music text-base mb-1"></i>
-                <span class="text-[10px] font-semibold tracking-tight">Music</span>
+                <span class="text-[9px] sm:text-[10px] font-semibold tracking-tight">Music</span>
+            </a>
+            <a href="https://psixomaniya.space/followyou" target="_blank" class="dock-nav-item" data-external="true">
+                <i class="fa-solid fa-compact-disc text-base mb-1"></i>
+                <span class="text-[9px] sm:text-[10px] font-semibold tracking-tight whitespace-nowrap">New Release</span>
             </a>
             <a href="#socials" class="dock-nav-item" data-section="socials">
                 <i class="fa-solid fa-share-nodes text-base mb-1"></i>
-                <span class="text-[10px] font-semibold tracking-tight">Social</span>
+                <span class="text-[9px] sm:text-[10px] font-semibold tracking-tight">Social</span>
             </a>
             <a href="#contact" class="dock-nav-item" data-section="contact">
                 <i class="fa-solid fa-envelope text-base mb-1"></i>
-                <span class="text-[10px] font-semibold tracking-tight">Contact</span>
+                <span class="text-[9px] sm:text-[10px] font-semibold tracking-tight">Contact</span>
             </a>
         </nav>
     </div>
@@ -488,6 +536,32 @@
     </footer>
 
     <script>
+        const cursor = document.getElementById('cursor');
+        const cursorTrail = document.getElementById('cursorTrail');
+        let mouseX = 0, mouseY = 0;
+        let trailX = 0, trailY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        function animateTrail() {
+            trailX += (mouseX - trailX) * 0.15;
+            trailY += (mouseY - trailY) * 0.15;
+            cursorTrail.style.left = trailX + 'px';
+            cursorTrail.style.top = trailY + 'px';
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        document.querySelectorAll('a, button, .platform-card, .social-link, .dock-nav-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
@@ -602,23 +676,36 @@
         function setActiveDockItem() {
             if (isManualClick) return;
 
-            let scrollY = window.pageYOffset;
+            const scrollY = window.pageYOffset;
+            const scrollPosition = scrollY + (window.innerHeight / 2);
+            const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 25);
 
-            sections.forEach(current => {
-                const sectionHeight = current.offsetHeight;
-                const sectionTop = current.offsetTop - 200;
-                const sectionId = current.getAttribute('id');
+            let currentSectionId = '';
 
-                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                    dockItems.forEach(item => {
-                        item.classList.remove('active');
-                        if (item.getAttribute('data-section') === sectionId) {
+            if (isAtBottom) {
+                currentSectionId = 'contact';
+            } else {
+                sections.forEach(section => {
+                    const top = section.offsetTop;
+                    const height = section.offsetHeight;
+                    if (scrollPosition >= top && scrollPosition < top + height) {
+                        currentSectionId = section.getAttribute('id');
+                    }
+                });
+            }
+
+            if (currentSectionId) {
+                dockItems.forEach(item => {
+                    if (!item.hasAttribute('data-external')) {
+                        if (item.getAttribute('data-section') === currentSectionId) {
                             item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
                         }
-                    });
-                    updatePillPosition();
-                }
-            });
+                    }
+                });
+                updatePillPosition();
+            }
         }
 
         window.addEventListener('scroll', setActiveDockItem);
@@ -626,6 +713,8 @@
 
         dockItems.forEach(item => {
             item.addEventListener('click', function() {
+                if (this.hasAttribute('data-external')) return;
+
                 isManualClick = true;
                 clearTimeout(clickTimer);
 
